@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <h1 class="mb-4">{{ post.title }}</h1>
+  <p class="text-muted">작성자: {{ post.author.username }} | 작성일: {{ post.created_at|date:"Y.m.d H:i" }}</p>
+  
+  <hr>
+  
+  <div class="card p-3 mb-4">
+    <p>{{ post.content|linebreaksbr }}</p>
+  </div>
+  
+  {% if post.author == request.user %}
+    <div class="d-flex justify-content-end mb-4">
+      <a href="{% url 'posts:update' post.pk %}" class="btn btn-sm btn-warning me-2">수정</a>
+      <form action="{% url 'posts:delete' post.pk %}" method="POST" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <h4 class="mt-5">댓글 ({{ comments|length }})</h4>
+  
+  {% if user.is_authenticated %}
+    <div class="card card-body mb-4 bg-light">
+        <form action="{% url 'posts:comment_create' post.pk %}" method="POST" class="d-flex">
+          {% csrf_token %}
+          {% bootstrap_form comment_form layout='inline' %} 
+          <button type="submit" class="btn btn-primary ms-2">댓글 작성</button>
+        </form>
+    </div>
+  {% else %}
+    <p class="text-muted">댓글을 작성하려면 <a href="{% url 'accounts:login' %}">로그인</a>하세요.</p>
+  {% endif %}
+
+  {% if comments %}
+    <ul class="list-group">
+      {% for comment in comments %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ comment.author.username }}</strong>
+            <small class="text-muted ms-2">{{ comment.created_at|date:"Y.m.d H:i" }}</small>
+            <p class="m-0">{{ comment.content }}</p>
+          </div>
+          {% if comment.author == request.user %}
+            <form action="{% url 'posts:comment_delete' post.pk comment.pk %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-center text-muted">아직 댓글이 없습니다.</p>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{% url 'posts:index' %}" class="btn btn-sm btn-outline-secondary">목록으로 돌아가기</a>
+  </div>
+{% endblock content %}

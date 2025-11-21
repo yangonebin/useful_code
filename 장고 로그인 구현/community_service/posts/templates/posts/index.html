@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="mb-4">커뮤니티 게시판</h1>
+  
+  <div class="d-flex justify-content-end mb-3">
+    {% if user.is_authenticated %}
+      <a href="{% url 'posts:create' %}" class="btn btn-primary">새 글 작성</a>
+    {% else %}
+      <p class="text-muted">글을 작성하려면 <a href="{% url 'accounts:login' %}">로그인</a>하세요.</p>
+    {% endif %}
+  </div>
+
+  {% if posts %}
+    <ul class="list-group">
+      {% for post in posts %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <a href="{% url 'posts:detail' post.pk %}" class="h5 text-decoration-none">{{ post.title }}</a>
+            <small class="text-muted d-block">작성자: {{ post.author.username }} | 작성일: {{ post.created_at|date:"Y.m.d H:i" }}</small>
+          </div>
+          <span class="badge bg-secondary rounded-pill">{{ post.comments.count }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-center text-muted">아직 게시글이 없습니다. 첫 글을 작성해 보세요!</p>
+  {% endif %}
+{% endblock content %}

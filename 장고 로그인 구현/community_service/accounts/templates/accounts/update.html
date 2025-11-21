@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <h1 class="mb-4">회원정보 수정</h1>
+  <form action="{% url 'accounts:update' %}" method="POST">
+    {% csrf_token %}
+    
+    {% bootstrap_form form %} 
+    
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary mt-3">수정 완료</button>
+    </div>
+  </form>
+  
+  <div class="mt-4">
+    <a href="{% url 'accounts:change_password' %}" class="btn btn-sm btn-outline-warning">비밀번호 변경</a>
+    
+    <button type="button" class="btn btn-sm btn-danger float-end" data-bs-toggle="modal" data-bs-target="#deleteModal">
+      회원 탈퇴
+    </button>
+  </div>
+
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">경고</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <form action="{% url 'accounts:delete' %}" method="POST" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">삭제</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

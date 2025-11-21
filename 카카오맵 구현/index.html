@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>PJT08 - 은행 검색 애플리케이션</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    
+    <script src="js/apikey.js"></script>
+</head>
+<body>
+    <header>
+        <h1>PJT08 - 은행 검색 애플리케이션</h1>
+    </header>
+    
+    <div id="search-container">
+        <h2>은행 찾기</h2>
+        <div class="select-group">
+            <select id="select-city-province">
+                <option value="">광역시/도 선택</option>
+            </select>
+            <select id="select-district" disabled>
+                <option value="">시/군/구 선택</option>
+            </select>
+            <select id="select-bank">
+                <option value="">은행명 선택</option>
+            </select>
+        </div>
+        <button id="search-button">검색</button>
+    </div>
+    <div id="map" style="width:700px;height:500px;"></div>
+
+    <script>
+    // API Key 변수를 사용하여 Kakao 지도 API 스크립트 동적 생성
+    if (typeof API_KEY !== 'undefined') {
+        const mapScript = document.createElement('script');
+        
+        // ✅ services 라이브러리 추가: '&libraries=services'
+        mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&autoload=false&libraries=services`;
+            
+            // ✅ 핵심: 카카오 API 로드가 완료되면 main.js를 동적으로 로드합니다.
+            mapScript.onload = () => {
+                const mainScript = document.createElement('script');
+                mainScript.src = 'js/main.js';
+                document.body.appendChild(mainScript);
+            };
+						
+            document.head.appendChild(mapScript);
+        } else {
+             // apikey.js 로드 실패 시 디버깅 메시지
+             console.error('API_KEY 변수를 찾을 수 없습니다. js/apikey.js 파일을 확인하세요.');
+        }
+    </script>
+    
+    </body>
+</html>
